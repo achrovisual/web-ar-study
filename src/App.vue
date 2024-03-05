@@ -1,26 +1,24 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+        <a-scene embedded arjs vr-mode-ui="enabled: false">
+        <a-marker preset="hiro">
+            <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
+            <a-entity
+            position="0 0 0"
+            scale="0.05 0.05 0.05"
+            gltf-model="scene.gltf"
+            ></a-entity>
+        </a-marker>
+        <a-entity camera></a-entity>
+        </a-scene>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
+  name: "App",
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
