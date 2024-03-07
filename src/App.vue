@@ -1,15 +1,17 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
+  <div id="ARScene"></div>
 </template>
 
 <script>
 import * as THREE from 'three';
-import { ArToolkitProfile, ArToolkitSource, ArToolkitContext, ArMarkerControls} from 'ar-js-org/ar-js/three.js/build/ar-threex.js';
+import { ArToolkitProfile, ArToolkitSource, ArToolkitContext, ArMarkerControls} from '@ar-js-org/ar.js/three.js/build/ar-threex.js';
 
 
 export default {
+  /* eslint-disable */ 
   name: 'App',
   mounted() {
+    console.log(ArToolkitContext.baseURL)
     ArToolkitContext.baseURL = './'
     console.log("ARScene mounted");
     
