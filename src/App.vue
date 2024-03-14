@@ -1,11 +1,10 @@
 <template>
-  <div id="ARScene"></div>
+  <video id="video" playsinline webkit-playsinline muted loop autoplay width="320" height="240" src="video/sintel.mp4" style="display: none"></video>
 </template>
 
 <script>
 import * as THREE from 'three';
 import { ArToolkitProfile, ArToolkitSource, ArToolkitContext, ArMarkerControls} from '@ar-js-org/ar.js/three.js/build/ar-threex.js';
-
 
 export default {
   /* eslint-disable */ 
@@ -34,6 +33,9 @@ export default {
     
     // init scene and camera
     var scene	= new THREE.Scene();
+    
+    let ambientLight = new THREE.AmbientLight( 0xcccccc, 0.5 );
+    scene.add( ambientLight );
     
     //////////////////////////////////////////////////////////////////////////////////
     //		Initialize a basic camera
@@ -125,36 +127,22 @@ export default {
       smoothThreshold: 2
     })
     
-    //////////////////////////////////////////////////////////////////////////////////
-    //		add an object in the scene
-    //////////////////////////////////////////////////////////////////////////////////
-    
     var markerScene = new THREE.Scene()
     markerGroup.add(markerScene)
     
-    var mesh = new THREE.AxesHelper()
-    markerScene.add(mesh)
+    // Auto play video on load
+    const video = document.getElementById("video");
+    video.onloadeddata = function () {
+      video.play();
+    };
     
-    // add a torus knot
-    var geometry	= new THREE.BoxGeometry(1,1,1);
-    var material	= new THREE.MeshNormalMaterial({
-      transparent : true,
-      opacity: 0.5,
-      side: THREE.DoubleSide
-    });
-    var mesh	= new THREE.Mesh( geometry, material );
-    mesh.position.y	= geometry.parameters.height/2
-    markerScene.add(mesh)
-    
-    var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,64,16);
-    var material	= new THREE.MeshNormalMaterial();
-    var mesh	= new THREE.Mesh( geometry, material );
-    mesh.position.y	= 0.5
-    markerScene.add( mesh );
-    
-    onRenderFcts.push(function(delta){
-      mesh.rotation.x += delta * Math.PI
-    })
+    //Create your video texture:
+    const texture = new THREE.VideoTexture(video);
+    const material1 =  new THREE.MeshBasicMaterial( {map: texture, side: THREE.FrontSide, toneMapped: false} );
+    //Create screen
+    const geometry1 = new THREE.PlaneGeometry(2,2,4,4);
+    const mesh1 = new THREE.Mesh(geometry1, material1);
+    markerScene.add(mesh1);
     
     //////////////////////////////////////////////////////////////////////////////////
     //		render the whole thing on the page
