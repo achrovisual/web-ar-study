@@ -55,12 +55,11 @@ export default {
       
       function onResize()
       {
-        arToolkitSource.onResize()	
-        arToolkitSource.copySizeTo(renderer.domElement)	
-        if ( arToolkitContext.arController !== null )
-        {
-          arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)	
-        }	
+        arToolkitSource.onResizeElement()
+        arToolkitSource.copyElementSizeTo(renderer.domElement)
+        if(arToolkitContext.arController !== null){
+          arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
+        }
       }
       
       arToolkitSource.init(function onReady(){
@@ -108,10 +107,10 @@ export default {
       let texture = new THREE.VideoTexture(video);
       let material1 =  new THREE.MeshBasicMaterial( {map: texture, side: THREE.FrontSide, toneMapped: false} );
       //Create screen
-      let geometry1 = new THREE.PlaneGeometry(2,2,4,4);
+      let geometry1 = new THREE.PlaneGeometry();
       
       mesh1 = new THREE.Mesh( geometry1, material1 );
-      mesh1.rotation.x = -Math.PI/2;
+      // mesh1.rotation.x = -Math.PI/2;
       
       markerRoot1.add( mesh1 );
     }
