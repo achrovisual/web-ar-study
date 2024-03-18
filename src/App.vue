@@ -4,7 +4,7 @@
 
 <script>
 import * as THREE from 'three';
-import { ArToolkitSource, ArToolkitContext, ArMarkerControls} from '@ar-js-org/ar.js/three.js/build/ar-threex.js';
+import { ArToolkitSource, ArToolkitContext, ArMarkerControls } from '@ar-js-org/ar.js/three.js/build/ar-threex.js';
 
 export default {
   /* eslint-disable */ 
@@ -53,8 +53,7 @@ export default {
         sourceType : 'webcam',
       });
       
-      function onResize()
-      {
+      function onResize() {
         arToolkitSource.onResizeElement()
         arToolkitSource.copyElementSizeTo(renderer.domElement)
         if(arToolkitContext.arController !== null){
@@ -78,13 +77,43 @@ export default {
       // create atToolkitContext
       arToolkitContext = new ArToolkitContext({
         cameraParametersUrl: 'data/camera_para.dat',
-        detectionMode: 'mono'
+        detectionMode: 'mono',
+        canvasWidth: document.documentElement.clientWidth,
+        canvasHeight: document.documentElement.clientHeight,
       });
       
       // copy projection matrix to camera when initialization complete
       arToolkitContext.init( function onCompleted(){
         camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+        
+        arToolkitContext.arController.orientation = getSourceOrientation(); 
+        arToolkitContext.arController.options.orientation = getSourceOrientation(); 
+        
+        console.log('arToolkitContext', arToolkitContext); 
+        window.arToolkitContext = arToolkitContext; 
       });
+      
+      function getSourceOrientation() { 
+        if (!arToolkitSource) { 
+          return null; 
+        } 
+        
+        console.log( 
+        'actual source dimensions', 
+        arToolkitSource.domElement.videoWidth, 
+        arToolkitSource.domElement.videoHeight 
+        ); 
+        
+        if (arToolkitSource.domElement.videoWidth > arToolkitSource.domElement.videoHeight) { 
+          console.log('source orientation', 'landscape'); 
+          return 'landscape'; 
+        } else { 
+          console.log('source orientation', 'portrait'); 
+          return 'portrait'; 
+        } 
+      }
+      
+      // arToolkitContext.arController.orientation = "portrait"
       
       ////////////////////////////////////////////////////////////
       // setup markerRoots
@@ -94,7 +123,7 @@ export default {
       markerRoot1 = new THREE.Group();
       scene.add(markerRoot1);
       let markerControls1 = new ArMarkerControls(arToolkitContext, markerRoot1, {
-        type: 'pattern', patternUrl: 'data/patt.hiro',
+        type: 'pattern', patternUrl: 'data/hiro.patt',
       })
       
       // Auto play video on load
@@ -107,31 +136,33 @@ export default {
       let texture = new THREE.VideoTexture(video);
       let material1 =  new THREE.MeshBasicMaterial( {map: texture, side: THREE.FrontSide, toneMapped: false} );
       //Create screen
-      let geometry1 = new THREE.PlaneGeometry();
+      let geometry1 = new THREE.PlaneGeometry(2,2,4,4);
       
       mesh1 = new THREE.Mesh( geometry1, material1 );
-      // mesh1.rotation.x = -Math.PI/2;
+      mesh1.rotation.x = -Math.PI/2;
       
       markerRoot1.add( mesh1 );
+      
+      const axesHelper = new THREE.AxesHelper( 5 );
+      markerRoot1.add( axesHelper );
+      
+      console.log(arToolkitContext)
     }
     
     
-    function update()
-    {
+    function update() {
       // update artoolkit on every frame
       if ( arToolkitSource.ready !== false )
       arToolkitContext.update( arToolkitSource.domElement );
     }
     
     
-    function render()
-    {
+    function render() {
       renderer.render( scene, camera );
     }
     
     
-    function animate()
-    {
+    function animate() {
       requestAnimationFrame(animate);
       deltaTime = clock.getDelta();
       totalTime += deltaTime;
