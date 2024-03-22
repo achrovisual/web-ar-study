@@ -1,5 +1,5 @@
 <template>
-  <video id="video" playsinline webkit-playsinline muted loop autoplay width="320" height="240" src="video/sintel.mp4" style="display: none"></video>
+  <video id="video" playsinline webkit-playsinline muted loop autoplay width="320" height="240" src="video/taco.mp4" style="display: none"></video>
 </template>
 
 <script>
@@ -78,16 +78,19 @@ export default {
       arToolkitContext = new ArToolkitContext({
         cameraParametersUrl: 'data/camera_para.dat',
         detectionMode: 'mono',
-        canvasWidth: document.documentElement.clientWidth,
-        canvasHeight: document.documentElement.clientHeight,
+        // canvasWidth: document.documentElement.clientWidth,
+        // canvasHeight: document.documentElement.clientHeight,
       });
       
       // copy projection matrix to camera when initialization complete
       arToolkitContext.init( function onCompleted(){
         camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
         
-        arToolkitContext.arController.orientation = getSourceOrientation(); 
-        arToolkitContext.arController.options.orientation = getSourceOrientation(); 
+        // arToolkitContext.arController.orientation = getSourceOrientation(); 
+        // arToolkitContext.arController.options.orientation = getSourceOrientation(); 
+        arToolkitContext.arController.orientation = "portrait"
+        arToolkitContext.arController.options.orientation = "portrait"
+        arToolkitContext.arController.setPattRatio(0.9);
         
         console.log('arToolkitContext', arToolkitContext); 
         window.arToolkitContext = arToolkitContext; 
@@ -123,7 +126,7 @@ export default {
       markerRoot1 = new THREE.Group();
       scene.add(markerRoot1);
       let markerControls1 = new ArMarkerControls(arToolkitContext, markerRoot1, {
-        type: 'pattern', patternUrl: 'data/hiro.patt',
+        type: 'pattern', patternUrl: 'data/taco.patt',
       })
       
       // Auto play video on load
@@ -136,10 +139,11 @@ export default {
       let texture = new THREE.VideoTexture(video);
       let material1 =  new THREE.MeshBasicMaterial( {map: texture, side: THREE.FrontSide, toneMapped: false} );
       //Create screen
-      let geometry1 = new THREE.PlaneGeometry(2,2,4,4);
+      let geometry1 = new THREE.PlaneGeometry(0.89,1,4,4);
       
       mesh1 = new THREE.Mesh( geometry1, material1 );
       mesh1.rotation.x = -Math.PI/2;
+      mesh1.scale.normalize().multiplyScalar(1.55);
       
       markerRoot1.add( mesh1 );
       
